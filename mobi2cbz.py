@@ -1,17 +1,15 @@
 from glob import glob
 from os import mkdir
-from os.path import (abspath, basename, dirname,
-                     isdir, isfile, join, splitext)
+from os.path import abspath, basename, dirname, isdir, isfile, join, splitext
 from shutil import make_archive, move, rmtree
 
 from bs4 import BeautifulSoup
-import fire
-import mobi
-
+from fire import Fire
+from mobi import extract
 
 
 def mobi2cbz(src, dst=None):
-    """Convert fixed layout mobi to cbz
+    """convert fixed layout mobi to cbz
 
     Args:
         src (str): source file (mobi, prc, azw, azw3, azw4)
@@ -20,25 +18,22 @@ def mobi2cbz(src, dst=None):
     """
     if not isfile(src):
         return "file does not exist"
-    # check if src is book
-    fname, ext = splitext(src)
+    fname, ext = splitext(basename(src))
     if ext.lower() not in [".mobi", ".prc", ".azw", ".azw3", ".azw4"]:
         return "unsupported file format"
-    # destination
     if dst is None:
         dst = join(dirname(abspath(src)), fname)
     else:
-        # check if dst exists
         if not isdir(dst):
             return "destination directory cannot be found"
         dst = join(dst, fname)
 
     # unpack and get temp folder
-    temp = mobi.extract(src)[0]
+    temp = extract(src)[0]
     # content files in temp folder after unpacking
     unpack_dir = join(temp, "mobi8", "OEBPS")
     # before zip
-    temp_dst = join(temp, fname)
+    temp_dst = join(temp, "mobi2cbz")
 
     mkdir(temp_dst)
 
@@ -53,7 +48,7 @@ def mobi2cbz(src, dst=None):
                  join(temp_dst, f"{str(cnt).zfill(5)}{split_txt[1]}"))
             cnt += 1
 
-    # zip it to cbz it
+    # zip to cbz
     make_archive(temp_dst, "zip", temp_dst)
     move(temp_dst+".zip", dst+".cbz")
 
@@ -61,4 +56,5 @@ def mobi2cbz(src, dst=None):
 
 
 
-fire.Fire(mobi2cbz)
+def main():
+    Fire(mobi2cbz)
