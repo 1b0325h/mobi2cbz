@@ -5,7 +5,6 @@ setup(
     version="1.0",
     author="Melano",
     url="https://github.com/1b0325h/mobi2cbz",
-    license="MIT",
     py_modules=["mobi2cbz"],
     install_requires=[
         "beautifulsoup4==4.9.3",
