@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="mobi2cbz",
-    version="1.0",
+    version="1.1",
     author="Melano",
     url="https://github.com/1b0325h/mobi2cbz",
     py_modules=["mobi2cbz"],
