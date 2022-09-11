@@ -11,18 +11,19 @@ import mobi
 
 
 def mobi2cbz(src, dst=None):
-    # check if src file exist
+    """Convert fixed layout mobi to cbz
+
+    Args:
+        src (str): source file (mobi, prc, azw, azw3, azw4)
+        dst (str): optionally, specify the destination folder
+                   or if not specified, it will be saved in the src folder
+    """
     if not isfile(src):
         return "file does not exist"
-
-    # check if src is a book
+    # check if src is book
     fname, ext = splitext(src)
     if ext.lower() not in [".mobi", ".prc", ".azw", ".azw3", ".azw4"]:
         return "unsupported file format"
-
-    # the unpack
-    temp = mobi.extract(src)[0]
-
     # destination
     if dst is None:
         dst = join(dirname(abspath(src)), fname)
@@ -32,12 +33,13 @@ def mobi2cbz(src, dst=None):
             return "destination directory cannot be found"
         dst = join(dst, fname)
 
-
-    # -----Analyze and convert unpacked book data to cbz-----
+    # unpack and get temp folder
+    temp = mobi.extract(src)[0]
+    # content files in temp folder after unpacking
     unpack_dir = join(temp, "mobi8", "OEBPS")
-
-    # create temp dst
+    # before zip
     temp_dst = join(temp, fname)
+
     mkdir(temp_dst)
 
     # sequence xhtml files in text folder
