@@ -42,12 +42,18 @@ def mobi2cbz(src, dst=None):
     cnt = 0
     for f in glob(f"{join(unpack_dir, 'Text')}/part*.xhtml"):
         soup = BeautifulSoup(open(f, encoding="utf_8"), "html.parser")
+
+        # There was a pattern of <img> and <image> in the sequence of xhtml file.
         img = soup.find("img")
         if img:
             split_txt = splitext(basename(img["src"]))
-            move(join(unpack_dir, "Images", "".join(split_txt)),
-                 join(temp_dst, f"{str(cnt).zfill(5)}{split_txt[1]}"))
-            cnt += 1
+        else:
+            img = soup.find("image")
+            split_txt = splitext(basename(img["xlink:href"]))
+
+        move(join(unpack_dir, "Images", "".join(split_txt)),
+             join(temp_dst, f"{str(cnt).zfill(5)}{split_txt[1]}"))
+        cnt += 1
 
     # zip to cbz
     make_archive(temp_dst, "zip", temp_dst)
